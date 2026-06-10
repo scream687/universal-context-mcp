@@ -1,0 +1,13 @@
+# Local context files (should never be published)
+_SESSION_CONTEXT.md
+.session_checkpoints.jsonl
+SHADOW_CONTEXT.md
+SESSION_CONTEXT.md
+
+# Development files
+node_modules/
+.git/
+.gitignore
+package-lock.json
+*.ts
+*.tmp
