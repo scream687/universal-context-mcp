@@ -66,6 +66,18 @@ Add this Ironclad Mandate to your project's `CLAUDE.md` or `GEMINI.md`:
 ```
 When a new agent boots up, it will read this rule, call the MCP tool, and instantly resume your work exactly where you left off.
 
+### 4. The Autopilot Hook (Zero-Effort Background Sync)
+Never forget to save context again. Run this once per project to install a Git hook that silently updates your context in the background every time you commit:
+```bash
+context-save --install-hook
+```
+
+### 5. Debug Mode
+If you need to trace execution speed, path resolution, or token count math, use the debug flag:
+```bash
+context-save --debug
+```
+
 ---
 
 ## 🏗 How It Works Under The Hood

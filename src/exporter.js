@@ -1,7 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const { execSync } = require('child_process');
-const chalk = require('chalk');
+const { logger } = require('./utils/logger');
 
 const IGNORE_DIRS = [".git", "node_modules", ".next", "dist", "build", "venv", ".venv", "__pycache__", ".Trash", "Library", "Applications"];
 const CORE_FILES = ["README.md", "GEMINI.md", "CLAUDE.md", "CONTEXT.md", "package.json", "Cargo.toml", "requirements.txt", "go.mod", "tsconfig.json", "next.config.js", "next.config.ts"];
@@ -14,6 +14,7 @@ function getDirectoryTree(dir, prefix = "", depth = 0) {
         items = fs.readdirSync(dir).filter(item => !IGNORE_DIRS.includes(item) && !item.startsWith("."));
         items.sort();
     } catch (e) {
+        logger.debug(`Tree permission denied at ${dir}`);
         return `${prefix} [Permission Denied]\n`;
     }
 
@@ -41,6 +42,7 @@ function getGitLog() {
 function getCoreMandates() {
     const claudePath = path.join(process.cwd(), 'CLAUDE.md');
     if (fs.existsSync(claudePath)) {
+        logger.debug("Found CLAUDE.md, extracting mandates.");
         const content = fs.readFileSync(claudePath, 'utf8');
         const mandates = content.match(/## Core Mandates([\s\S]*?)(?=##|$)/);
         return mandates ? mandates[1].trim() : 'Mandates not found in CLAUDE.md';
@@ -51,6 +53,7 @@ function getCoreMandates() {
 function getLocalMemory() {
     const memoryPath = path.join(process.cwd(), 'MEMORY.md');
     if (fs.existsSync(memoryPath)) {
+        logger.debug("Found MEMORY.md, extracting snapshot.");
         return fs.readFileSync(memoryPath, 'utf8');
     }
     return 'No local MEMORY.md found.';
@@ -60,10 +63,12 @@ async function exportContext(handoffMsg = "", cloudSync = false) {
     const outputFileName = "_SESSION_CONTEXT.md";
     const ledgerFile = ".session_checkpoints.jsonl";
     
-    console.log(chalk.blue("🚀 Gathering universal project context..."));
+    logger.info("🚀 Gathering universal project context...");
+    const startTime = Date.now();
 
     // 1. Ledger Persistence
     if (handoffMsg) {
+        logger.debug(`Writing to ledger: ${handoffMsg}`);
         const entry = JSON.stringify({ timestamp: new Date().toISOString(), message: handoffMsg });
         fs.appendFileSync(path.join(process.cwd(), ledgerFile), entry + "\n");
     }
@@ -84,9 +89,11 @@ async function exportContext(handoffMsg = "", cloudSync = false) {
 
     const diff = getGitDiff();
     if (diff) {
+        logger.debug("Captured active git diff.");
         content += `## 🛠️ Active Changes (Uncommitted)\n\`\`\`diff\n${diff}\n\`\`\`\n\n`;
     }
 
+    logger.debug("Generating directory tree.");
     content += `## 📁 Directory Structure\n\`\`\`\n${path.basename(process.cwd())}\n${getDirectoryTree(process.cwd())}\`\`\`\n\n`;
 
     const log = getGitLog();
@@ -94,16 +101,19 @@ async function exportContext(handoffMsg = "", cloudSync = false) {
         content += `## 🔄 Recent Git History\n\`\`\`\n${log}\`\`\`\n\n`;
     }
 
+    logger.debug("Reading core files.");
     content += `## 📄 Core Context Files\n\n`;
     for (const file of CORE_FILES) {
         const filePath = path.join(process.cwd(), file);
         if (fs.existsSync(filePath)) {
+            logger.debug(`Included: ${file}`);
             content += `### ${file}\n\`\`\`\n${fs.readFileSync(filePath, 'utf8')}\n\`\`\`\n\n`;
         }
     }
 
     // Token Weight Estimation
     const estTokens = Math.floor(content.length / 4);
+    logger.debug(`Calculated estimated tokens: ${estTokens}`);
     content = content.replace("## 🧠 Mental Model", `## ⚖️ Token Weight Estimation\n- **Estimated Export Size:** ~${estTokens} tokens\n\n## 🧠 Mental Model`);
 
     fs.writeFileSync(path.join(process.cwd(), outputFileName), content);
@@ -112,24 +122,28 @@ async function exportContext(handoffMsg = "", cloudSync = false) {
     if (process.platform === 'darwin') {
         try {
             execSync(`pbcopy < ${outputFileName}`);
-            console.log(chalk.green("📋 Clipboard Sync: Contents copied!"));
-        } catch (e) {}
+            logger.success("📋 Clipboard Sync: Contents copied!");
+        } catch (e) {
+            logger.debug("pbcopy failed (possibly non-interactive environment).");
+        }
     }
 
     // Cloud Sync (Gist)
     if (cloudSync) {
         try {
-            console.log(chalk.cyan("☁️ Uploading to private GitHub Gist..."));
+            logger.info("☁️ Uploading to private GitHub Gist...");
             const gistUrl = execSync(`gh gist create ${outputFileName} -p -d "Session Context: ${new Date().toISOString()}" | tail -n 1`).toString().trim();
-            console.log(chalk.cyan(`🔗 Gist Link: ${gistUrl}`));
+            logger.success(`🔗 Gist Link: ${gistUrl}`);
             fs.appendFileSync(path.join(process.cwd(), outputFileName), `\n\n🔗 Gist Link: ${gistUrl}`);
             if (process.platform === 'darwin') execSync(`pbcopy < ${outputFileName}`);
         } catch (e) {
-            console.log(chalk.red("❌ Cloud sync failed. Ensure 'gh' CLI is installed and authenticated."));
+            logger.error("❌ Cloud sync failed. Ensure 'gh' CLI is installed and authenticated.");
         }
     }
 
-    console.log(chalk.green(`✅ Context exported to: ${outputFileName}`));
+    const duration = Date.now() - startTime;
+    logger.debug(`Export completed in ${duration}ms`);
+    logger.success(`✅ Context exported to: ${outputFileName}`);
     return content;
 }
 
