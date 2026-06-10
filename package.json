@@ -1,6 +1,6 @@
 {
   "name": "universal-context-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Hardcore Context Preservation & Auto-Bootstrapping for AI Agents",
   "main": "src/server.js",
   "bin": {
