@@ -1,0 +1,29 @@
+{
+  "name": "universal-context-mcp",
+  "version": "1.0.0",
+  "description": "Hardcore Context Preservation & Auto-Bootstrapping for AI Agents",
+  "main": "src/server.js",
+  "bin": {
+    "context-save": "bin/cli.js"
+  },
+  "scripts": {
+    "start": "node bin/cli.js --mcp",
+    "setup": "node src/setup.js"
+  },
+  "keywords": [
+    "mcp",
+    "context",
+    "claude",
+    "gemini",
+    "handoff",
+    "persistence"
+  ],
+  "author": "Nidhivan",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.1",
+    "chalk": "^4.1.2",
+    "fs-extra": "^10.0.0",
+    "zod": "^3.11.6"
+  }
+}
