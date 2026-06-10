@@ -1,17 +1,34 @@
+<div align="center">
+  
 # 📦 Universal Context MCP
+**The God-Tier Context Preservation Engine for AI Agents**
 
-A professional-grade context preservation engine for AI Agents (Gemini, Claude, etc.). This tool ensures zero knowledge loss when transitioning between sessions, environments, or agents.
+[![npm version](https://badge.fury.io/js/universal-context-mcp.svg)](https://badge.fury.io/js/universal-context-mcp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-## 🚀 One-Click Handoff
+*Zero knowledge loss when transitioning between sessions, environments, or agents.*
 
-This suite provides a lossless context bridge by bundling your project state into a high-density Markdown package and automatically syncing it to your clipboard or the cloud.
+</div>
 
-### ✨ Key Features
-- **Zero-Touch Setup:** One command to configure your global CLI environment.
-- **Auto-Bootstrapping:** Agents automatically "re-animate" with the previous session's architectural intent.
-- **Session Time Machine:** Local ledger tracks the evolution of your project decisions.
-- **Precision Token Budgeting:** Calculates exact context pressure to prevent agent degradation.
-- **Cloud Sync:** Securely upload context to private GitHub Gists for global portability.
+<br />
+
+## 🎯 The Problem
+You start a new session with an AI agent (Claude, Gemini, etc.). It spends the first 20 minutes reading files, guessing your architecture, and asking questions you already answered yesterday. 
+
+## ⚡ The Solution
+**Universal Context MCP** creates a lossless context bridge. It bundles your project state, uncommitted changes, and architectural intent into a high-density package that "re-animates" any new agent instantly.
+
+---
+
+## ✨ Features
+
+- 🏎️ **Zero-Touch Setup:** One command auto-configures your global Claude/CLI environment.
+- 🧠 **Auto-Bootstrapping:** Agents automatically load the previous session's exact focus and blockers.
+- 🕰️ **Session Time Machine:** A local `.session_checkpoints.jsonl` ledger tracks the evolution of your project decisions.
+- ⚖️ **Precision Token Budgeting:** Calculates exact context pressure to prevent agent degradation.
+- ☁️ **Cloud Sync:** Securely upload context to private GitHub Gists for global cross-machine portability.
+
+---
 
 ## 📦 Installation
 
@@ -22,34 +39,47 @@ npm install -g universal-context-mcp
 # 2. Auto-configure your CLI/Agent environment
 context-save --setup
 ```
+*(The setup command automatically injects the MCP server into your global `.claude.json` or equivalent).*
+
+---
 
 ## 🛠 Usage
 
-### Manual Export
-Run this in any project root to copy context to your clipboard:
+### 1. Manual Export (The "Save State")
+Run this in any project root to grab a high-density snapshot and copy it directly to your clipboard:
 ```bash
-context-save "Brief description of current focus"
+context-save "Brief description of current focus or blockers"
 ```
 
-### Cloud Export
-Move context between machines using private Gists:
+### 2. Cloud Export (Cross-Machine)
+Moving from your desktop to your laptop? Use a secure GitHub Gist:
 ```bash
 context-save "Moving to home laptop" --cloud
 ```
 
-### 📜 Mandatory Bootstrap Rule
-Add this mandate to your project's `CLAUDE.md` or `GEMINI.md` to ensure every new session starts perfectly:
+### 3. Agentic Handoff (The "Auto-Bootstrap")
+Add this Ironclad Mandate to your project's `CLAUDE.md` or `GEMINI.md`:
 
 ```markdown
 ## Core Mandates
 - **Auto-Bootstrap:** At the start of EVERY new session, you MUST immediately call `bootstrap_session_context` to load the previous architectural intent and focus.
 ```
-
-## 🏗 Suite Components
-- `export-context.sh`: The core bash engine (zero-dependency).
-- `context-save`: The global CLI tool.
-- `universal-context-mcp`: The integrated MCP server for agentic automation.
-- `shadow-sync.ts`: The architectural "mental model" persistent ledger.
+When a new agent boots up, it will read this rule, call the MCP tool, and instantly resume your work exactly where you left off.
 
 ---
-Built for the next generation of AI-Native development.
+
+## 🏗 How It Works Under The Hood
+
+When invoked, the exporter intelligently bundles:
+1.  **Environment:** OS and Path.
+2.  **Shadow Context:** The manual intent or handoff note.
+3.  **Active Changes:** A lightweight `git diff --stat`.
+4.  **Structure:** A depth-limited, noise-filtered directory tree.
+5.  **History:** The last 5 `git log` entries.
+6.  **Core Files:** Automatic injection of `README.md`, `CLAUDE.md`, `package.json`, etc.
+
+<br />
+
+<div align="center">
+  <i>Built for the next generation of AI-Native development.</i>
+</div>
